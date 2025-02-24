@@ -108,29 +108,27 @@ namespace WebApp.Infrastructure.Repositories
         public async Task<List<ContactEntity>> GetContactsWithCompanyAndCountry()
         {
             return await dbContext.Contacts
-                .Include(c => c.Company) // Вклучи ја компанијата
-                .Include(c => c.Country) // Вклучи ја земјата
+                .Include(c => c.Company) 
+                .Include(c => c.Country) 
                 .ToListAsync();
         }
         public async Task<List<ContactEntity>> FilterContacts(int? countryId, int? companyId)
         {
             var query = dbContext.Contacts.AsQueryable();
 
-            // Филтрирање по земја ако countryId е даден
             if (countryId.HasValue && countryId.Value > 0)
             {
                 logger.LogInformation("Filtering contacts by CountryId: {CountryId}", countryId.Value);
                 query = query.Where(c => c.CountryId == countryId.Value);
             }
 
-            // Филтрирање по компанија ако companyId е даден
             if (companyId.HasValue && companyId.Value > 0)
             {
                 logger.LogInformation("Filtering contacts by CompanyId: {CompanyId}", companyId.Value);
                 query = query.Where(c => c.CompanyId == companyId.Value);
             }
 
-            // Вклучување на компанија и земја
+            
             query = query.Include(c => c.Company).Include(c => c.Country);
 
             return await query.ToListAsync();
